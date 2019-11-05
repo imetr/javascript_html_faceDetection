@@ -19,7 +19,7 @@ video.addEventListener('play', () => {
     document.body.append(canvas)
     const displaySize = {
         width: video.width,
-        height: video.height
+        height: video.height,
     }
     faceapi.matchDimensions(canvas, displaySize)
     setInterval( async () => {
@@ -30,6 +30,14 @@ video.addEventListener('play', () => {
         faceapi.draw.drawDetections(canvas, resizedDetections)
         faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
         faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
-        console.log("detections", detections)
+        resizedDetections.forEach(result => {
+            const { age, gender, genderProbability } = result
+            new faceapi.draw.DrawTextField(
+                [`${faceapi.round(age,0)} years`,
+                `${gender} (${faceapi.round(genderProbability)})`
+                ],
+                result.detection.box.topRight
+            ).draw(canvas)
+        });
     }, 200)
 })
